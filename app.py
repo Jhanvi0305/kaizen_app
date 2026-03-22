@@ -9,6 +9,10 @@ app = Flask(__name__)
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# ✅ Ensure upload folder exists (FIXED POSITION)
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
 # DB INIT
 def init_db():
     conn = sqlite3.connect('/tmp/kaizen.db')
@@ -77,14 +81,10 @@ def submit():
     if before_file and before_file.filename:
         before_filename = str(datetime.datetime.now().timestamp()) + "_" + before_file.filename
         before_file.save(os.path.join(app.config['UPLOAD_FOLDER'], before_filename))
-        if not os.path.exists(UPLOAD_FOLDER):
-           os.makedirs(UPLOAD_FOLDER)
 
     if after_file and after_file.filename:
         after_filename = str(datetime.datetime.now().timestamp()) + "_" + after_file.filename
         after_file.save(os.path.join(app.config['UPLOAD_FOLDER'], after_filename))
-        if not os.path.exists(UPLOAD_FOLDER):
-           os.makedirs(UPLOAD_FOLDER)
 
     kaizen_id = "KZ-" + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
 
@@ -128,11 +128,10 @@ def dashboard():
     dept_data = {}
 
     for row in data:
-
-       try:
-    total_savings += float(row[11]) if row[11] else 0
-except:
-    pass
+        try:
+            total_savings += float(row[11]) if row[11] else 0
+        except:
+            pass
 
         cat = row[10]
         if cat:
@@ -230,12 +229,7 @@ def export():
 
     return send_file(file_path, as_attachment=True)
 
-
-
-
-
-import os
-
+# RUN APP
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
