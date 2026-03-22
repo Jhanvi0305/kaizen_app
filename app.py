@@ -11,7 +11,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # DB INIT
 def init_db():
-    conn = sqlite3.connect('kaizen.db')
+    conn = sqlite3.connect('/tmp/kaizen.db')
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -75,16 +75,20 @@ def submit():
     after_filename = ""
 
     if before_file and before_file.filename:
-        before_filename = before_file.filename
+        before_filename = str(datetime.datetime.now().timestamp()) + "_" + before_file.filename
         before_file.save(os.path.join(app.config['UPLOAD_FOLDER'], before_filename))
+        if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
     if after_file and after_file.filename:
-        after_filename = after_file.filename
+        after_filename = str(datetime.datetime.now().timestamp()) + "_" + after_file.filename
         after_file.save(os.path.join(app.config['UPLOAD_FOLDER'], after_filename))
+        if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
     kaizen_id = "KZ-" + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
 
-    conn = sqlite3.connect('kaizen.db')
+    conn = sqlite3.connect('/tmp/kaizen.db')
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -112,7 +116,7 @@ def submit():
 @app.route('/dashboard')
 def dashboard():
 
-    conn = sqlite3.connect('kaizen.db')
+    conn = sqlite3.connect('/tmp/kaizen.db')
     cursor = conn.cursor()
 
     cursor.execute("SELECT * FROM kaizens")
@@ -125,8 +129,10 @@ def dashboard():
 
     for row in data:
 
-        if row[11]:
-            total_savings += float(row[11])
+       try:
+    total_savings += float(row[11]) if row[11] else 0
+except:
+    pass
 
         cat = row[10]
         if cat:
@@ -150,7 +156,7 @@ def dashboard():
 # APPROVE
 @app.route('/approve/<int:id>')
 def approve(id):
-    conn = sqlite3.connect('kaizen.db')
+    conn = sqlite3.connect('/tmp/kaizen.db')
     cursor = conn.cursor()
     cursor.execute("UPDATE kaizens SET status='Approved' WHERE id=?", (id,))
     conn.commit()
@@ -160,7 +166,7 @@ def approve(id):
 # REJECT
 @app.route('/reject/<int:id>')
 def reject(id):
-    conn = sqlite3.connect('kaizen.db')
+    conn = sqlite3.connect('/tmp/kaizen.db')
     cursor = conn.cursor()
     cursor.execute("UPDATE kaizens SET status='Rejected' WHERE id=?", (id,))
     conn.commit()
@@ -176,7 +182,7 @@ def update_sustenance(id):
     if file and file.filename:
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
 
-    conn = sqlite3.connect('kaizen.db')
+    conn = sqlite3.connect('/tmp/kaizen.db')
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -194,7 +200,7 @@ def update_sustenance(id):
 @app.route('/export')
 def export():
 
-    conn = sqlite3.connect('kaizen.db')
+    conn = sqlite3.connect('/tmp/kaizen.db')
     cursor = conn.cursor()
 
     cursor.execute("SELECT * FROM kaizens")
@@ -227,6 +233,8 @@ def export():
 
 
 
+
+import os
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
