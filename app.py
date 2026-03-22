@@ -78,13 +78,13 @@ def submit():
         before_filename = str(datetime.datetime.now().timestamp()) + "_" + before_file.filename
         before_file.save(os.path.join(app.config['UPLOAD_FOLDER'], before_filename))
         if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+           os.makedirs(UPLOAD_FOLDER)
 
     if after_file and after_file.filename:
         after_filename = str(datetime.datetime.now().timestamp()) + "_" + after_file.filename
         after_file.save(os.path.join(app.config['UPLOAD_FOLDER'], after_filename))
         if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+           os.makedirs(UPLOAD_FOLDER)
 
     kaizen_id = "KZ-" + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
 
