@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+</head>
+<body>
+
+<h1>Kaizen Dashboard</h1>
+
+<h3>Total: {{ total_kaizens }}</h3>
+<h3>Savings: ₹ {{ total_savings }}</h3>
+
+<a href="/export"><button>Download Excel</button></a>
+
+<h2>Analytics</h2>
+<canvas id="c1"></canvas>
+<canvas id="c2"></canvas>
+
+<table border="1">
+<tr>
+<th>ID</th><th>Emp</th><th>Dept</th><th>Cat</th><th>Save</th>
+<th>Status</th><th>Sustain</th><th>Files</th><th>Action</th>
+</tr>
+
+{% for r in data %}
+<tr>
+<td>{{ r[1] }}</td>
+<td>{{ r[2] }}<br>{{ r[3] }}<br>{{ r[4] }}</td>
+<td>{{ r[5] }}</td>
+<td>{{ r[10] }}</td>
+<td>{{ r[11] }}</td>
+<td>{{ r[16] }}</td>
+<td>{% if r[17]=="Green" %}🟢{% else %}🔴{% endif %}</td>
+
+<td>
+<a href="/static/uploads/{{ r[14] }}">Before</a><br>
+<a href="/static/uploads/{{ r[15] }}">After</a>
+</td>
+
+<td>
+<a href="/approve/{{ r[0] }}">Approve</a> |
+<a href="/reject/{{ r[0] }}">Reject</a>
+
+<form action="/update_sustenance/{{ r[0] }}" method="POST" enctype="multipart/form-data">
+<input type="file" name="proof_file">
+<button>Update</button>
+</form>
+</td>
+
+</tr>
+{% endfor %}
+</table>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+new Chart(document.getElementById("c1"), {
+type:"bar",
+data:{
+labels: {{ category_data.keys() | list | tojson }},
+datasets:[{data: {{ category_data.values() | list | tojson }} }]
+}
+});
+
+new Chart(document.getElementById("c2"), {
+type:"pie",
+data:{
+labels: {{ dept_data.keys() | list | tojson }},
+datasets:[{data: {{ dept_data.values() | list | tojson }} }]
+}
+});
+</script>
+
+</body>
+</html>

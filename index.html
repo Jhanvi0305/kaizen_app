@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Kaizen Form</title>
+</head>
+<body>
+
+<h2>Kaizen Submission</h2>
+
+<form method="POST" action="/submit" enctype="multipart/form-data">
+
+Employee 1: <input name="emp1_name"><br><br>
+Employee 2: <input name="emp2_name"><br><br>
+Employee 3: <input name="emp3_name"><br><br>
+
+Department: <input name="department"><br><br>
+Area: <input name="area"><br><br>
+Title: <input name="title"><br><br>
+
+Before:<br><textarea name="before"></textarea><br><br>
+After:<br><textarea name="after"></textarea><br><br>
+
+Category:
+<select name="category" onchange="toggleSavings(this.value)">
+<option>Cost</option>
+<option>Productivity</option>
+<option>Safety</option>
+</select><br><br>
+
+<div id="savings" style="display:none;">
+Monthly: <input type="number" name="monthly_saving"><br>
+Yearly: <input type="number" name="yearly_saving"><br>
+One-time: <input type="number" name="one_time_saving"><br>
+</div><br>
+
+Before File: <input type="file" name="before_file"><br><br>
+After File: <input type="file" name="after_file"><br><br>
+
+<button>Submit</button>
+
+</form>
+
+<script>
+function toggleSavings(v){
+document.getElementById("savings").style.display = v==="Cost"?"block":"none";
+}
+</script>
+
+</body>
+</html>
